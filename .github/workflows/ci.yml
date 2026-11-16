@@ -1,0 +1,39 @@
+
+name: CI - Pruebas del proyecto
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  pruebas:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar el código
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Instalar dependencias
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Ejecutar pruebas
+        run: python -m pytest -v
+
+      - name: Crear archivo ZIP
+        run: |
+          zip proyecto-rectangulo-cicd.zip main.py test_main.py requirements.txt .gitignore
+
+      - name: Guardar ZIP como artefacto
+        uses: actions/upload-artifact@v4
+        with:
+          name: proyecto-rectangulo-cicd
+          path: proyecto-rectangulo-cicd.zip
